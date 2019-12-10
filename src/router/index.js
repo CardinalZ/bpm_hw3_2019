@@ -13,7 +13,6 @@ import CommodityDetail from '../components/commodity/CommodityDetail'
 import OrderDetail from '../components/platform/OrderDetail'
 import QueryAndSort from '../components/platform/QueryAndSort'
 import CommodityReviewList from '../components/platform/CommodityReviewList'
-import CommodityDetailReview from '../components/commodity/CommodityDetailReview'
 
 Vue.use(Router)
 

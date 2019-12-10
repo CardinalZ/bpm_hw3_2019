@@ -33,7 +33,6 @@ export default {
     ])
   },
   mounted () {
-    console.log(this.role)
     APIUtil.get('/Commodity/'+ this.id).then(res=>{
         this.commodity = res.data
         console.log(res.data)
