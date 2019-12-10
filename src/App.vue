@@ -8,21 +8,33 @@
       <Header>
         <div class="layout-logo"></div>
         <div class="layout-title">
-          上海市市场监督管理局
+          移动旅游出行平台
         </div>
       </Header>
       <Layout :style="{minHeight: '100vh'}">
         <Sider :style="{padding:'10px 0'}" class="white-bg">
-          <Menu ref="menu" :theme="'light'" active-name="'visit'" width="auto" @on-select="onSelected">
-              <MenuItem name="Upload">
-                <Icon type="md-document" />
-                <span>上传</span>
-              </MenuItem>
-              <MenuItem  name="Query">
-                <Icon type="md-pulse" />
-                <span>查询</span>
-              </MenuItem>
-          </Menu>
+            <Menu ref="menu" :theme="'light'" active-name="'visit'" width="auto" @on-select="onSelected">
+              <div v-if="role==='merchant'">
+                <MenuItem name="CommodityList">
+                  <Icon type="md-document" />
+                  <span>商品信息查看与上传</span>
+                </MenuItem>
+                <MenuItem name="OrderList">
+                  <Icon type="md-document" />
+                  <span>订单信息审核</span>
+                </MenuItem>
+              </div>
+              <div v-if="role==='platformManager'">
+                <MenuItem name="CommodityReviewList">
+                  <Icon type="md-pulse" />
+                  <span>商品信息审核</span>
+                </MenuItem>
+                <MenuItem name="QueryAndSort">
+                  <Icon type="md-pulse" />
+                  <span>信息查询及分类</span>
+                </MenuItem>
+              </div>
+            </Menu>
         </Sider>
           <Content :style="{padding: '10px 16px 16px'}">
               <router-view/>
@@ -35,6 +47,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Login from './components/Login'
+import APIUtil from './services/APIUtil'
 
 export default {
   name: 'App',
@@ -59,7 +72,61 @@ export default {
       this.$router.push({
         name: name
       })
-    }
+    },
+    checkUpdate () {
+      if (this.role === 'platformManager') {
+        APIUtil.get('/Commodity').then(response => {
+          if (response.status === 200) {
+            let list = response.data.Commodity
+            /*
+             * If count is not equal, get its last item
+             */
+            if (this.lastCount !== 0 && list.length !== this.lastCount) {
+              this.sendNoticeCommodity(list[list.length - 1])
+            }
+            /*
+             * Update lastCount
+             */
+            this.lastCount = list.length
+          }
+        })
+      }
+    },
+    sendNoticeCommodity (newCommodity) {
+      let id = newCommodity.id
+      let commodityname = newCommodity.commodityname
+      //let examinationTime = newCommodity.timestamp * 1000
+      this.$Notice.info({
+        title: '商品 - ' + id,
+        name: id,
+        duration: 0,
+        render: createElement => {
+          return createElement('div', {
+              style: {
+                lineHeight: 1.5
+              },
+              on: {
+                click: () => {
+                  this.$router.push({
+                    name: 'CommodityDetail',
+                    params: {
+                      id: id
+                    }
+                  })
+                  this.$Notice.close(id)
+                }
+              }
+            },
+            [
+              createElement('p', ['商品名称: ' + commodityname]),
+              //createElement('p', ['开单时间: ' + Util.timeStampFormatter(examinationTime)])
+            ])
+        }
+      })
+    },
+  },
+  mounted () {
+    setInterval(() => this.checkUpdate(), 2000)
   }
 }
 </script>

@@ -6,9 +6,9 @@ export default {
    * 初始化Axios
    */
   init () {
-    Vue.axios.defaults.baseURL = 'http://dev4.hbjk.com.cn:8011/file'
-    Vue.axios.defaults.headers.post['Content-Type'] = 'application/json'
-    Vue.axios.defaults.timeout = 5000
+    Vue.axios.defaults.baseURL = 'http://47.97.175.189:8080/Entity/U20dc5fd38286f/ATour'
+    Vue.axios.defaults.headers.post['Content-Type'] = 'application/json'///指定为json格式
+    // Vue.axios.defaults.timeout = 5000
   },
 
   /**

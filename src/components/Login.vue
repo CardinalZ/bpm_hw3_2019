@@ -21,11 +21,18 @@ export default {
   },
   methods: {
     login () {
-      if (this.name === 'root' && this.password === '123456') {
-        // 门诊医生
+      if (this.name === 'platform' && this.password === '123456') {
+        // 平台管理者
         this.$store.dispatch('changeLoginState', true)
+        this.$store.dispatch('changeRole', 'platformManager')
         this.$router.push({
-          name: 'Upload'
+          name: 'PlatformManager'
+        })
+      } else if (this.name === 'merchant' && this.password === '123456') {
+        this.$store.dispatch('changeLoginState', true)
+        this.$store.dispatch('changeRole', 'merchant')
+        this.$router.push({
+          name: 'Merchant'
         })
       }
     }

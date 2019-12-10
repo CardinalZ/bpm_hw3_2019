@@ -9,15 +9,15 @@
     <Col span="12"><strong>航班信息：</strong>{{commodity.flight}}</Col>
     <Col span="12"><strong>酒店信息：</strong>{{commodity.hotel}}</Col>
     <Col span="12"><strong>行程安排：</strong>{{commodity.commodityplan}}</Col>
-    <Button type="primary" style="width: 100px" @click="reviewPass">审核通过</Button>
+    <div v-if="this.role === 'platformManager' && commodity.review_status !== 'pass'">
+      <Button type="primary" style="width: 100px" @click="reviewPass">审核通过</Button>
+    </div>
   </div>
-
-
-
 </template>
 
 <script>
 import APIUtil from '../../services/APIUtil'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'CommodityDetail',
@@ -27,7 +27,13 @@ export default {
       id: this.$route.params.id
     }
   },
+  computed: {
+    ...mapGetters([
+      'role'
+    ])
+  },
   mounted () {
+    console.log(this.role)
     APIUtil.get('/Commodity/'+ this.id).then(res=>{
         this.commodity = res.data
         console.log(res.data)
@@ -36,11 +42,12 @@ export default {
   },
   methods: {
     reviewPass(){
-      APIUtil.put('/Commodity/'+this.id,{
-        'review_status': 'pass'
-      }).then(res=>{
-        if(res.status === '200')
+      this.commodity.review_status = 'pass'
+      APIUtil.put('/Commodity/'+this.id,this.commodity).then(res=>{
+        console.log(this.commodity)
+        if(res.status === 200)
           alert("审核通过")
+          // window.location.reload()
         }
       )
     }

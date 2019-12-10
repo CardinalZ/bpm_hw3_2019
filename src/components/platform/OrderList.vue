@@ -23,7 +23,7 @@
 </template>
 
 <script>
-  import OrderData from '../../../mock/order_mock_data'
+  import OrderData from '../../mock/order_mock_data'
 
 export default {
   name: 'OrderList',

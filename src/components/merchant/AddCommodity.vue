@@ -56,7 +56,7 @@
 </template>
 
 <script>
-  import APIUtil from '../../../services/APIUtil'
+  import APIUtil from '../../services/APIUtil'
 
   export default {
     name: 'AddCommodity',
