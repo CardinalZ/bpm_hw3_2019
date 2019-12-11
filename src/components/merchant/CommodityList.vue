@@ -64,6 +64,9 @@
         ],
         data: [], //  data show in Table
         commodityname: null,
+        commoditydays: null,
+        commodityplace: null,
+        recommendresult: null
       }
     },
     // mounted () {
@@ -100,9 +103,7 @@
           resultList = response.data.Commodity
           this.data = [] // clean the current data
           resultList.forEach(item => {
-            this.data.push({
-              commodityname: item.commodityname,
-            })
+            this.data.push(item)
           })
         })
       },

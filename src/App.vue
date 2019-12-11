@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Layout v-if="!isLogin" style="height: 900px">
+    <Layout v-if="!isLogin" style="height: 100%">
       <Login/>
     </Layout>
 

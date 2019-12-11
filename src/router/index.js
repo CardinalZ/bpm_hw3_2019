@@ -7,10 +7,10 @@ import Login from '@/components/Login'
 import PlatformManager from '../components/platform/PlatformManager'
 import Merchant from '../components/merchant/Merchant'
 import CommodityList from '../components/merchant/CommodityList'
-import OrderList from '../components/platform/OrderList'
+import OrderList from '../components/merchant/OrderList'
 import AddCommodity from '../components/merchant/AddCommodity'
 import CommodityDetail from '../components/commodity/CommodityDetail'
-import OrderDetail from '../components/platform/OrderDetail'
+import OrderDetail from '../components/merchant/OrderDetail'
 import QueryAndSort from '../components/platform/QueryAndSort'
 import CommodityReviewList from '../components/platform/CommodityReviewList'
 
@@ -43,7 +43,7 @@ export default new Router({
       component: CommodityList
     },
     {
-      path: '/orderlist',
+      path: '/orderlist/',
       name: 'OrderList',
       component: OrderList
     },
@@ -53,7 +53,7 @@ export default new Router({
       component: AddCommodity
     },
     {
-      path: '/commodityDetail',
+      path: '/commodityDetail/:id?',
       name: 'CommodityDetail',
       component: CommodityDetail
     },

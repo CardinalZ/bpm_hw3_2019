@@ -39,7 +39,6 @@
 
 <script>
   import APIUtil from '../../services/APIUtil'
-  import CommodityData from '../../mock/commodity_mock_data'
 
   export default {
     name: 'CommodityReviewList',
