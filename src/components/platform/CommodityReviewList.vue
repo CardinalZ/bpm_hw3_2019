@@ -25,7 +25,7 @@
         {{commodity1.commodityname}}
       </p>
       <a href="#" slot="extra" @click.prevent="handleClick(commodity1.id)">
-      审核已通过
+        审核已通过
       </a>
       <div style="text-align:left">
         <!--        <p>预定时间： {{order.timestamp | beijing}}</p>-->

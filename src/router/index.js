@@ -1,76 +1,71 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Query from '@/components/Query'
-import QueryDetail from '@/components/QueryDetail'
-import Upload from '@/components/Upload'
-import Login from '@/components/Login'
-import PlatformManager from '../components/platform/PlatformManager'
-import Merchant from '../components/merchant/Merchant'
-import CommodityList from '../components/merchant/CommodityList'
-import OrderList from '../components/merchant/OrderList'
-import AddCommodity from '../components/merchant/AddCommodity'
-import CommodityDetail from '../components/commodity/CommodityDetail'
-import OrderDetail from '../components/merchant/OrderDetail'
-import QueryAndSort from '../components/platform/QueryAndSort'
-import CommodityReviewList from '../components/platform/CommodityReviewList'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
-      path: '/platformManager',
-      name: 'PlatformManager',
-      component: PlatformManager
-    }, {
-      path: '/merchant',
-      name: 'Merchant',
-      component: Merchant
-    },
-    {
-      path: '/login',
+      path: '/',
       name: 'Login',
-      component: Login
+      component: () => import(`../views/Login`)
     },
     {
-      path: '/detail/:projectName?',
-      name: 'QueryDetail',
-      component: QueryDetail
+      path: '/frame',
+      component: () => import(`../views/frame`),
+      children: [
+        {
+          path: '/platformManager',
+          name: 'PlatformManager',
+          component: () => import('../components/platform/PlatformManager')
+        },
+        {
+          path: '/merchant',
+          name: 'Merchant',
+          component: () => import('../components/merchant/Merchant')
+        },
+
+        {
+          path: '/detail/:projectName?',
+          name: 'QueryDetail',
+          component: () => import(`../components/QueryDetail`)
+        },
+        {
+          path: '/commodityList',
+          name: 'CommodityList',
+          component: () => import('../components/merchant/CommodityList')
+        },
+        {
+          path: '/orderlist/',
+          name: 'OrderList',
+          component: () => import('../components/merchant/OrderList')
+        },
+        {
+          path: '/addCommodity',
+          name: 'AddCommodity',
+          component: () => import('../components/merchant/AddCommodity')
+        },
+        {
+          path: '/commodityDetail/:id?',
+          name: 'CommodityDetail',
+          component: () => import('../components/commodity/CommodityDetail')
+        },
+        {
+          path: '/orderDetail/:id?',
+          name: 'OrderDetail',
+          component: () => import('../components/merchant/OrderDetail')
+        },
+        {
+          path: '/queryAndSort',
+          name: 'QueryAndSort',
+          component: () => import('../components/platform/QueryAndSort')
+        },
+        {
+          path: '/commodityReviewList',
+          name: 'CommodityReviewList',
+          component: () => import('../components/platform/CommodityReviewList')
+        }
+      ]
     },
-    {
-      path: '/commodityList',
-      name: 'CommodityList',
-      component: CommodityList
-    },
-    {
-      path: '/orderlist/',
-      name: 'OrderList',
-      component: OrderList
-    },
-    {
-      path: '/addCommodity',
-      name: 'AddCommodity',
-      component: AddCommodity
-    },
-    {
-      path: '/commodityDetail/:id?',
-      name: 'CommodityDetail',
-      component: CommodityDetail
-    },
-    {
-      path: '/orderDetail/:id?',
-      name: 'OrderDetail',
-      component: OrderDetail
-    },
-    {
-      path: '/queryAndSort',
-      name: 'QueryAndSort',
-      component: QueryAndSort
-    },
-    {
-      path: '/commodityReviewList',
-      name: 'CommodityReviewList',
-      component: CommodityReviewList
-    }
   ]
 })
