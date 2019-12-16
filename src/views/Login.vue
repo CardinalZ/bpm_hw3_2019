@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Card style="width: 60%;margin: 15% auto;" class="card">
+    <Card style="width: 30%;margin: 15% auto;" class="card">
       <div style="font-weight: bold;" slot="title">后台系统登录</div>
       <div>
         <Input v-model="name" prefix="ios-contact" placeholder="Username"/>

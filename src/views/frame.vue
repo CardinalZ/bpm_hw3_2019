@@ -5,6 +5,20 @@
       <div class="layout-title">
         移动旅游出行平台
       </div>
+      <div style="text-align: right;font-size: medium;color: white">
+      <Dropdown>
+          <Avatar icon="ios-person" size="large" />
+          {{this.role}}
+          <Icon type="ios-arrow-down"></Icon>
+        <DropdownMenu slot="list">
+          <DropdownItem>基本信息</DropdownItem>
+          <DropdownItem>账户信息</DropdownItem>
+          <DropdownItem>用户与权限</DropdownItem>
+          <DropdownItem divided><Button @click="logout">退出登陆</Button></DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+
+      </div>
     </Header>
     <Layout :style="{minHeight: '100vh'}">
       <Sider style="background: white;">
@@ -26,7 +40,7 @@
             </MenuItem>
             <MenuItem name="QueryAndSort">
               <Icon type="md-pulse"/>
-              <span>信息查询及分类</span>
+              <span>商家信息查询</span>
             </MenuItem>
           </div>
         </Menu>
@@ -65,6 +79,11 @@
       onSelected (name) {
         this.$router.push({
           name: name
+        })
+      },
+      logout(){
+        this.$router.push({
+          name: 'Login'
         })
       },
       checkUpdate () {
