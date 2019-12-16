@@ -1,12 +1,337 @@
 <template>
   <div id="app">
+    <div style="border-bottom: 1px solid red;display: flex;">
+      <Input @on-enter="connectIM" v-model="acc_id" placeholder="acc_id"/>
+      <Button @click="connectIM()">连接</Button>
+      <Button @click="animate(0)">animate1</Button>
+      <Button @click="animate(1)">animate2</Button>
+    </div>
     <router-view/>
+    <div class="msg_body"
+         :style="{transform:style_msg_body}">
+      <div style="display: flex;align-items: center;
+      padding: 5px 8px;border-bottom: 1px gray solid;">
+        <div>
+          <Button @click="exitChat"
+                  size="small" style="background: transparent;" shape="circle" icon="ios-arrow-back"/>
+        </div>
+        <img style="width: 36px;height: 36px;margin:0 8px;border-radius: 5px;"
+             src="https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3471450367,2960035463&fm=111&gp=0.jpg">
+        <div style="font-weight: bold;">Vila vida</div>
+      </div>
+
+      <div id='z-scroll-chat' style="height: 300px;" class="z-scroll">
+        <div v-for="item in chat_list">
+          <div v-if="!item.isMine" style="text-align: left;margin-bottom: 8px;">
+            <div style="padding-left: 3px;font-size: xx-small">{{item.time}}</div>
+            <div
+              style="background: #2E8B57;margin-right: 48px;padding: 5px 8px;
+          border-top-right-radius: 10px;border-bottom-right-radius: 10px;display: inline-block;">
+              {{item.text}}
+            </div>
+          </div>
+          <div v-if="item.isMine" style="text-align: right;margin-bottom: 8px;">
+            <div style="padding-right: 3px;font-size: xx-small">{{item.time}}</div>
+            <div
+              style="background: #4169E1;margin-left: 48px;padding: 5px 8px;
+          border-top-left-radius: 10px;border-bottom-left-radius: 10px;display: inline-block;">
+              {{item.text}}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex;padding: 8px 8px;border-top: 1px gray solid;">
+        <Input @on-enter="sendMsg" v-model="input_msg" placeholder="请输入..."/>
+        <Button :loading="loading_send" @click="sendMsg" style="margin-left: 8px;">发送
+        </Button>
+      </div>
+
+    </div>
+    <div class="msg_list"
+         :style="{transform:style_msg_list}">
+      <div v-for="item in session_list"
+           @click="enterChat(item)"
+           style="display: flex;align-items: center;border-radius: 5px;cursor: pointer;
+           padding: 5px 8px;background: #000c;margin-bottom: 1px;">
+        <img style="width: 36px;height: 36px;margin-right: 5px;border-radius: 5px;"
+             src="https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3471450367,2960035463&fm=111&gp=0.jpg">
+        <div style="width: 320px;display: flex;flex-direction: column;">
+          <div style="display: flex;">
+            <div>{{item.fromNick}}</div>
+            <div style="flex-grow: 1;"></div>
+            <div>{{item.time}}</div>
+          </div>
+          <Badge dot :count="item.unread">
+            <div style="text-align: left;">{{item.text}}</div>
+          </Badge>
+        </div>
+      </div>
+    </div>
+    <div class="msg_ball">
+      <Badge dot>
+        <div @animationend='msgAnimationEnd(0)'
+             @click="toggleChatting"
+             :class="{'animated tada':isAnimating[0]}"
+             class="msg_tip_item">
+          系统
+        </div>
+      </Badge>
+      <br>
+      <Badge dot>
+        <div @animationend='msgAnimationEnd(1)'
+             @click="toggleChatting"
+             :class="{'animated tada':isAnimating[1]}"
+             class="msg_tip_item">
+          个人
+        </div>
+      </Badge>
+    </div>
   </div>
 </template>
 
 <script>
   export default {
     name: 'App',
+    data () {
+      return {
+        isAnimating: [true, true],
+        input_msg: '',
+        acc_id: 'test1',
+        talk_to: '',
+        nim: null,
+        loading_send: false,
+        chat_list: [
+          // {
+          //   isMine: false,
+          //   from: '',
+          //   to: '',
+          //   text: 'hello',
+          //   time: new Date().format('yyyy-MM-dd hh:mm:ss')
+          // },
+        ],
+        session_list: [
+          {
+            flow: 'in',
+            to: '',
+            unread: 1,
+            from: '',
+            fromNick: '王小波',
+            time: new Date().format('yyyy-MM-dd hh:mm:ss'),
+            text: '一想到你，我的脸上就泛起微笑',
+            avatar: '',
+          }
+        ],
+        isChatting: false,
+        isShowChat: false,
+        cur_session: null,
+      }
+    },
+    mounted () {
+      // this.initIM()
+    },
+    computed: {
+      style_msg_body () {
+        if (this.isShowChat) {
+          return this.isChatting ? 'translateX(0px)' : 'translateX(1000px)'
+        } else {
+          return 'translateX(1000px)'
+        }
+      },
+      style_msg_list () {
+        if (this.isShowChat) {
+          return this.isChatting ? 'translateX(1000px)' : 'translateX(0px)'
+        } else {
+          return 'translateX(1000px)'
+        }
+      },
+    },
+    methods: {
+      initSessionList (sessions) {
+        // this.session_list = []
+        sessions.forEach(it => {
+          this.session_list.push({
+            flow: it.lastMsg.flow,
+            to: it.to,
+            unread: it.unread,
+            fromNick: it.lastMsg.fromNick,
+            time: new Date(it.lastMsg.time).format('yyyy-MM-dd hh:mm:ss'),
+            text: it.lastMsg.text,
+            avatar: '',
+          })
+        })
+      },
+      updateSession (session) {
+        let curI = -1
+        let it = null
+        for (let i = 0; i < this.session_list.length; i++) {
+          it = this.session_list[i]
+          if (session.to === it.to) {
+            curI = i
+            break
+          }
+        }
+        if (curI !== -1) {
+          this.session_list.splice(curI, 1)
+          it = session
+        }
+        this.session_list.unshift({
+          flow: it.lastMsg.flow,
+          to: it.to,
+          unread: it.unread,
+          fromNick: it.lastMsg.fromNick,
+          time: new Date(it.lastMsg.time).format('yyyy-MM-dd hh:mm:ss'),
+          text: it.lastMsg.text,
+          avatar: '',
+        })
+      },
+      toggleChatting () {
+        this.isShowChat = !this.isShowChat
+      },
+      animate (i) {
+        this.isAnimating[i] = true
+        this.isAnimating = [...this.isAnimating]
+      },
+      msgAnimationEnd (i) {
+        this.isAnimating[i] = false
+        this.isAnimating = [...this.isAnimating]
+      },
+      exitChat () {
+        this.isChatting = false
+      },
+      enterChat (item) {
+        if (!item.to) {
+          this.$Message.error('这是一个测试会话')
+          return
+        }
+        this.cur_session = item
+        this.isChatting = true
+        this.getHistoryMsgs()
+      },
+      getHistoryMsgs () {
+        if (this.nim) {
+          let _this = this
+          this.nim.getHistoryMsgs({
+            scene: 'p2p',
+            to: this.cur_session.to,
+            done (error, obj) {
+              console.log('获取p2p历史消息' + (!error ? '成功' : '失败'))
+              console.log(error)
+              console.log(obj)
+              if (!error) {
+                console.log(obj.msgs)
+                obj.msgs.forEach(msg => {
+                  _this.appendNewMsg(msg, true)
+                })
+              }
+            },//done
+          })
+        }
+      },
+      appendNewMsg (msg, front) {
+        if (front) {
+          this.chat_list.unshift({
+            isMine: msg.flow === 'out',
+            from: msg.from,
+            to: msg.to,
+            text: msg.text,
+            time: new Date(msg.time).format('yyyy-MM-dd hh:mm:ss')
+          })
+        } else {
+          this.chat_list.push({
+            isMine: msg.flow === 'out',
+            from: msg.from,
+            to: msg.to,
+            text: msg.text,
+            time: new Date(msg.time).format('yyyy-MM-dd hh:mm:ss')
+          })
+        }
+        let ele = document.getElementById('z-scroll-chat')
+        this.$nextTick(() => {
+          ele.scrollTop = ele.scrollHeight
+        })
+      },
+      sendMsg () {
+        let to = 'test1'
+        if (this.acc_id === 'test1') {
+          to = 'test2'
+        }
+        console.log('发送消息给', to)
+        if (!this.nim) {
+          this.$Message.error('尚未连接IM服务器，尝试重新连接')
+          this.connectIM()
+          return
+        }
+        let _this = this
+        this.loading_send = true
+        this.nim.sendText({
+          scene: 'p2p',
+          to: to,
+          text: this.input_msg,
+          done (error, msg) {
+            _this.loading_send = false
+            if (error) {
+              console.log('消息发送失败')
+              console.log(error)
+            } else {
+              _this.appendNewMsg(msg)
+            }
+          }//done
+        })
+      },
+      connectIM () {
+        let token = '219338cb0cda45ac1a7e21a689a4d77e'
+        this.talk_to = 'test2'
+        if (this.acc_id === 'test2') {
+          token = 'a6156a446a50c1f5d014ca3d910092e8'
+          this.talk_to = 'test1'
+        }
+        this.$Message.loading('连接IM服务器')
+        let _this = this
+        this.nim = this.SDK.NIM.getInstance({
+          debug: false,
+          appKey: 'afcf5899f1d81c39a6780a7cbbf4b322',
+          account: this.acc_id,
+          token: token,
+          onconnect: (obj) => {
+            console.log('IM连接成功', obj)
+            _this.$Message.destroy()
+          },
+          ondisconnect (error) {
+            console.log('IM连接失败', error)
+            _this.$Message.destroy()
+          },
+          onwillreconnect (obj) {
+            console.log('IM即将重连')
+            console.log(obj.retryCount)
+            console.log(obj.duration)
+          },
+          onerror (error) {
+            console.log('IM初始化错误')
+            console.log(error)
+          },
+          onmsg: (msg) => {
+            console.log('收到消息')
+            console.log(msg)
+            _this.animate(1)
+            if (msg.from === _this.talk_to) {
+              _this.appendNewMsg(msg)
+            }
+          },//onmsg
+          onsessions (sessions) {
+            console.log('收到会话列表', sessions)
+            _this.initSessionList(sessions)
+            // _this.updateSessionsUI()
+          },
+          onupdatesession (session) {
+            console.log('会话更新了', session)
+            _this.updateSession(session)
+            // data.sessions = this.nim.mergeSessions(data.sessions, session)
+            // _this.updateSessionsUI()
+          },
+        })
+      },
+    },
   }
 </script>
 
@@ -16,6 +341,70 @@
 
 <style lang="scss" scoped>
 
+  .xxs-font {
+    font-size: xx-small;
+  }
+
+  .z-scroll {
+    overflow-y: scroll;
+
+    /*&::-webkit-scrollbar {*/
+    /*  display: none;*/
+    /*}*/
+  }
+
+  .msg_body {
+    transition: all .5s;
+    width: 400px;
+    border-radius: 10px;
+    background: #000d;
+    position: fixed;
+    z-index: 100;
+    top: 20px;
+    right: 20px;
+    color: white;
+  }
+
+  .msg_list {
+    transition: all .5s;
+    padding: 8px;
+    border-radius: 10px;
+    background: #0007;
+    position: fixed;
+    z-index: 100;
+    top: 20px;
+    right: 20px;
+    color: white;
+  }
+
+  .msg_ball {
+    padding: 12px 0;
+    border-radius: 10px;
+    position: fixed;
+    z-index: 100;
+    bottom: 20px;
+    right: 20px;
+    color: white;
+
+    .msg_tip_item {
+      background: #0007;
+      width: 50px;
+      padding: 3px 0;
+      border-top-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      cursor: pointer;
+
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+
+      &:hover {
+        background: #000a;
+      }
+    }
+  }
+
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -23,4 +412,6 @@
     text-align: center;
     color: #2c3e50;
   }
+
+
 </style>
