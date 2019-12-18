@@ -22,7 +22,7 @@
           <!--          添加Tag部分-->
           <div>
             <i-select :model.sync="selectTag" clearable style="width:100px">
-              <i-option v-for="item in tagList" :value="item">{{ item }}</i-option>
+              <i-option v-for="item in tagList" :value="item " :key="item">{{ item }}</i-option>
             </i-select>
             <Button icon="ios-plus-empty" type="dashed" size="small" @click="count += 1">
               添加标签
@@ -102,7 +102,6 @@
       <div style="padding: 16px;">
         <Button style="width: 300px;" type="primary" long>上传</Button>
       </div>
-
 
       <!--      原来部分 未修改-->
       <Col span="12">
