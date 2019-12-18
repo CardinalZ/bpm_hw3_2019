@@ -7,24 +7,20 @@
       </Divider>
       <div class="add-item">
         <div class="label">商品名称：</div>
-        <Input class="input" placeholder="Enter something..."/>
+        <Input class="input" v-model="name" placeholder="Enter something..."/>
         <div class="label">商品价格：</div>
-        <Input style="width: 30%;" class="input" placeholder="Enter something..."/>
+        <Input style="width: 30%;" v-model="price" class="input" placeholder="Enter something..."/>
       </div>
       <div class="add-item">
         <div class="label">商品标签：</div>
         <div style="display: flex;flex-wrap: wrap;padding: 5px;">
-          <Tag type="border" closable color="blue">标签一</Tag>
-          <Tag type="border" closable color="blue">标签一</Tag>
-          <Tag type="border" closable color="blue">标签一</Tag>
-          <Tag type="border" closable color="blue">标签一</Tag>
-          <Tag type="border" closable color="blue">标签一</Tag>
+          <Tag  v-for=" tag1 in tag" v-bind:key="tag1" type="border" closable color="blue">{{tag1}}</Tag>
           <!--          添加Tag部分-->
           <div>
-            <i-select :model.sync="selectTag" clearable style="width:100px">
-              <i-option v-for="item in tagList" :value="item " :key="item">{{ item }}</i-option>
+            <i-select v-model="selectTag" clearable style="width:100px">
+              <i-option  v-for="item in tagList" :value="item " :key="item">{{ item }}</i-option>
             </i-select>
-            <Button icon="ios-plus-empty" type="dashed" size="small" @click="count += 1">
+            <Button icon="ios-plus-empty" type="dashed" size="small" @click="addTag">
               添加标签
             </Button>
           </div>
@@ -35,15 +31,12 @@
       <div class="add-item" style="display: block;">
         <div class="label">景点风光：</div>
         <div class="img-box">
-          <img :src="img1"/>
-          <img :src="img2"/>
-          <img :src="img2"/>
-          <img :src="img1"/>
+          <img v-for="img in img_list" :src="img"/>
         </div>
         <div style="display: flex;align-items: center;padding: 8px 0;justify-content: center;">
           <div class="label">图片url：</div>
-          <Input style="width: 300px;" placeholder="Enter something..."></Input>
-          <Button style="margin-left: 16px">添加图片</Button>
+          <Input v-model="img_address" style="width: 300px;" placeholder="Enter something..."></Input>
+          <Button style="margin-left: 16px" @click="addImag">添加图片</Button>
         </div>
       </div>
       <!--      行程路线-->
@@ -51,32 +44,33 @@
         <h5>行程路线</h5>
       </Divider>
 
-      <div class="day-item">
-        <img :src="img1"/>
-        <div class="text-part">
-          <div class="activity">Day 1 远眺四姑凉山</div>
-          <div class="description">这里是内容描述</div>
+      <div v-for="detail in details" v-if="detail.img!=''">
+        <div class="day-item">
+          <img :src="detail.img"/>
+          <div class="text-part">
+            <div class="activity">{{detail.activity}}</div>
+            <div class="description">{{detail.description}}</div>
+          </div>
+          <div id="map1" style="width: 100px;height: 100px;"></div>
         </div>
-        <div id="map1" style="width: 100px;height: 100px;"></div>
       </div>
-
       <!--      添加新日程-->
       <div style="border-radius: 10px;padding: 8px;background: #efefef">
         <div style="text-align: left;font-weight: bold;">添加新日程</div>
         <div class="add-item" style="justify-content: center;">
           <div class="label">活动名称：</div>
-          <Input style="width: 300px;" placeholder="Enter something..."></Input>
+          <Input v-model="activity1" style="width: 300px;" placeholder="Enter something..."></Input>
         </div>
         <div class="add-item" style="justify-content: center;">
           <div class="label">活动描述：</div>
-          <Input type="textarea" style="width: 300px;" placeholder="Enter something..."></Input>
+          <Input v-model="description1" type="textarea" style="width: 300px;" placeholder="Enter something..."></Input>
         </div>
         <div class="add-item" style="justify-content: center;">
           <div class="label">活动图片：</div>
-          <Input style="width: 300px;" placeholder="请输入图片地址"></Input>
+          <Input v-model="img1" style="width: 300px;" placeholder="请输入图片地址"></Input>
         </div>
         <div id="add-map" style="height: 150px;"></div>
-        <Button style="margin-top:8px;width: 100px;" type="primary">添加</Button>
+        <Button style="margin-top:8px;width: 100px;" type="primary" @click="addActivity">添加</Button>
       </div>
 
       <!--      套餐类型-->
@@ -100,58 +94,9 @@
       </div>
 
       <div style="padding: 16px;">
-        <Button style="width: 300px;" type="primary" long>上传</Button>
+        <Button style="width: 300px;" type="primary" @click="upload">上传</Button>
       </div>
-
-      <!--      原来部分 未修改-->
-      <Col span="12">
-        商品名
-        <Input v-model="commodityname" placeholder="Enter something..." style="width: 200px;text-align: left"/>
-      </Col>
-      <Col span="12">
-        商品总价
-        <Input v-model="commodityprice" placeholder="Enter something..." style="width: 200px;text-align: center"/>
-      </Col>
-      <br>
-      <Col span="12">
-        出发地
-        <Input v-model="commodityplace" placeholder="Enter something..." style="width: 200px;text-align: center"/>
-      </Col>
-      <Col span="12">
-        游玩天数
-        <Input v-model="commoditydays" placeholder="Enter something..." style="width: 200px;text-align: center"/>
-      </Col>
-      <br>
-      <Col span="12">
-        推荐指数
-        <Rate v-model="value" style="text-align: justify"/>
-      </Col>
-      <Col span="12">
-        推荐理由
-        <Input v-model="recommendresult" show-word-limit type="textarea" placeholder="Enter something..."
-               style="width: 200px;text-align: center"/>
-      </Col>
     </div>
-    <Divider>
-      <h2>行程路线</h2>
-    </Divider>
-    <div>
-      <Input v-model="commodityplan" show-word-limit type="textarea" rows="6" placeholder="Enter something..."
-             style="width: 600px;text-align: center"/>
-    </div>
-    <Divider>
-      <h2>内容详情</h2>
-    </Divider>
-    <Col span="12">
-      航班信息
-      <Input v-model="flight" show-word-limit placeholder="Enter something..."
-             style="width: 200px;text-align: center"/>
-    </Col>
-    <Col span="12">
-      酒店信息
-      <Input v-model="hotel" placeholder="Enter something..." style="width: 200px;text-align: center"/>
-    </Col>
-    <Button type="primary" style="width: 100px" @click="upload">上传</Button>
   </div>
 </template>
 
@@ -162,45 +107,40 @@
     name: 'AddCommodity',
     data () {
       return {
-        commodityname: '',
-        commodityplace: '',
-        commodityprice: '',
-        recommendresult: '',
-        commoditydays: '',
-        commodityplan: '',
-        flight: '',
-        hotel: '',
-        value: 0,
-        review_status: '',
-        merchant_name: '',
-
+        name: '',
+        price: '',
+        img_address: '',
+        img_list: [],
+        tag: [],
+        selectTag: '',
+        details: [{
+          activity : '',
+          description : '',
+          img : ''
+        }],
+        activity1:'',
+        description1 : '',
+        img1 : '',
+        item: '',
         selectTag: '',
         tagList: ['爬山', '徒步', '风光'],
-
-        img1: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1577237025&di=5b8a84bbfae15af2a24f3e6c64c71f88&imgtype=jpg&er=1&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fphotoblog%2F1304%2F06%2Fc4%2F19579216_19579216_1365288471360_mthumb.jpg',//删除
-        img2: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1576642390353&di=0ce238c5f8b0c4a169817ec87b9e16ef&imgtype=0&src=http%3A%2F%2Fpic.qjimage.com%2Fph115%2Fhigh%2Fph5417-p06013.jpg',//删除
       }
     },
     methods: {
-      upload () {
-        APIUtil.post('/Commodity', {
-          'commodityname': this.commodityname,
-          'commodityprice': this.commodityprice,
-          'commodityplace': this.commodityplace,
-          'commoditydays': this.commoditydays,
-          'recommendresult': this.recommendresult,
-          'commodityplan': this.commodityplan,
-          'flight': this.flight,
-          'hotel': this.hotel,
-          'value': this.value,
-          'review_status': 'review',
-          'merchant_name': '携程伴你行'
-        }).then((res) => {
-          if (res.status === 200) {
-            alert('上传成功')
-          }
+      addActivity () {
+        this.details.push({
+          'activity': this.activity1,
+          'description': this.description1,
+          'img': this.img1
         })
-      },//upload
+      },
+      addImag(){
+        this.img_list.push(this.img_address)
+      },
+      addTag(){
+        this.tag.push(this.selectTag)
+        console.log(this.tag)
+      },
       initMap () {
         let map = new AMap.Map('map1', {
           zoom: 11,//级别
@@ -217,8 +157,25 @@
           center: [116.397428, 39.90923],//中心点坐标
           viewMode: '3D'//使用3D视图
         })
-      }
+      },
+      upload () {
+        APIUtil.post('/Tour', {
+          'name': this.name,
+          'price': this.price,
+          'details': JSON.stringify(this.details),//字符串序列化
+          'img_list': JSON.stringify(this.img_list),
+          'tag': JSON.stringify(this.tag),
+          'review_status': 'review',
+          'merchant_name': '携程伴你行'
+        }).then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            alert('上传成功')
+          }
+        })
+      }//upload
     },
+
     mounted () {
       this.initMap()
 
@@ -291,5 +248,6 @@
       object-fit: cover;
     }
   }
+
 
 </style>
