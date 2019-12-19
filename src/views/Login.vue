@@ -17,7 +17,7 @@
     name: 'Login',
     data () {
       return {
-        name: 'platform',
+        name: 'merchant',
         password: '123456',
       }
     },
