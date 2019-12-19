@@ -14,18 +14,17 @@
       <div class="add-item">
         <div class="label">商品标签：</div>
         <div style="display: flex;flex-wrap: wrap;padding: 5px;">
-          <Tag  v-for=" tag1 in tag" v-bind:key="tag1" type="border" closable color="blue">{{tag1}}</Tag>
+          <Tag v-for=" tag1 in tag" v-bind:key="tag1" type="border" closable color="blue">{{tag1}}</Tag>
           <!--          添加Tag部分-->
           <div>
             <i-select v-model="selectTag" clearable style="width:100px">
-              <i-option  v-for="item in tagList" :value="item " :key="item">{{ item }}</i-option>
+              <i-option v-for="item in tagList" :value="item " :key="item">{{ item }}</i-option>
             </i-select>
             <Button icon="ios-plus-empty" type="dashed" size="small" @click="addTag">
               添加标签
             </Button>
           </div>
         </div>
-
       </div>
       <!--      景点风光-->
       <div class="add-item" style="display: block;">
@@ -44,14 +43,14 @@
         <h5>行程路线</h5>
       </Divider>
 
-      <div v-for="detail in details" v-if="detail.img!=''">
+      <div v-for="(detail,index) in details" :key="index">
         <div class="day-item">
           <img :src="detail.img"/>
           <div class="text-part">
             <div class="activity">{{detail.activity}}</div>
             <div class="description">{{detail.description}}</div>
           </div>
-          <div id="map1" style="width: 100px;height: 100px;"></div>
+          <div :id="`map${index}`" style="width: 100px;height: 100px;"></div>
         </div>
       </div>
       <!--      添加新日程-->
@@ -59,15 +58,16 @@
         <div style="text-align: left;font-weight: bold;">添加新日程</div>
         <div class="add-item" style="justify-content: center;">
           <div class="label">活动名称：</div>
-          <Input v-model="activity1" style="width: 300px;" placeholder="Enter something..."></Input>
+          <Input v-model="dayItem.activity" style="width: 300px;" placeholder="Enter something..."></Input>
         </div>
         <div class="add-item" style="justify-content: center;">
           <div class="label">活动描述：</div>
-          <Input v-model="description1" type="textarea" style="width: 300px;" placeholder="Enter something..."></Input>
+          <Input v-model="dayItem.description" type="textarea" style="width: 300px;"
+                 placeholder="Enter something..."></Input>
         </div>
         <div class="add-item" style="justify-content: center;">
           <div class="label">活动图片：</div>
-          <Input v-model="img1" style="width: 300px;" placeholder="请输入图片地址"></Input>
+          <Input v-model="dayItem.img" style="width: 300px;" placeholder="请输入图片地址"></Input>
         </div>
         <div id="add-map" style="height: 150px;"></div>
         <Button style="margin-top:8px;width: 100px;" type="primary" @click="addActivity">添加</Button>
@@ -114,76 +114,94 @@
         tag: [],
         selectTag: '',
         details: [{
-          activity : '',
-          description : '',
-          img : ''
+          activity: '活动名称',
+          description: '活动描述',
+          img: 'http://img0.imgtn.bdimg.com/it/u=2680964399,3702267545&fm=26&gp=0.jpg',
+          lnglat: [116.397428, 39.90923],
         }],
-        activity1:'',
-        description1 : '',
-        img1 : '',
+        dayItem: {
+          activity: '',
+          description: '',
+          img: '',
+          lnglat: [116.397428, 39.90923],
+        },
         item: '',
-        selectTag: '',
         tagList: ['爬山', '徒步', '风光'],
+        addMap: null,
+        addMarker: null,
       }
     },
     methods: {
       addActivity () {
-        this.details.push({
-          'activity': this.activity1,
-          'description': this.description1,
-          'img': this.img1
-        })
+        if (!(this.dayItem.activity && this.dayItem.description && this.dayItem.img)) {
+          this.$Message.error('请填写完全！')
+          return
+        }
+        this.details.push(this.dayItem)
+        this.$nextTick(this.updateDayItemMap)
       },
-      addImag(){
+      addImag () {
         this.img_list.push(this.img_address)
       },
-      addTag(){
+      addTag () {
         this.tag.push(this.selectTag)
         console.log(this.tag)
       },
-      initMap () {
-        let map = new AMap.Map('map1', {
-          zoom: 11,//级别
-          center: [116.397428, 39.90923],//中心点坐标
-          viewMode: '3D'//使用3D视图
+      updateDayItemMap () {
+        for (let i = 0; i < this.details.length; i++) {
+          let item = this.details[i]
+          let map = new AMap.Map(`map${i}`, {
+            zoom: 11,
+            center: item.lnglat,
+            viewMode: '3D'
+          })
+          new AMap.Marker({
+            position: item.lnglat,
+            title: item.activity,
+            map: map,
+          })
+        }
+      },
+      initAddMap () {
+        this.addMap = new AMap.Map('add-map', {
+          zoom: 11,
+          center: [116.397428, 39.90923],
+          viewMode: '3D'
         })
-        let marker = new AMap.Marker({
-          position: new AMap.LngLat(116.397428, 39.90923),   // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-          title: '北京',
-          map: map,
-        })
-        new AMap.Map('add-map', {
-          zoom: 11,//级别
-          center: [116.397428, 39.90923],//中心点坐标
-          viewMode: '3D'//使用3D视图
+        this.addMap.on('click', ev => {
+          // console.log(ev)
+          if (this.addMarker) {
+            this.addMap.remove(this.addMarker)
+          }
+          let lnglat = [ev.lnglat.lng, ev.lnglat.lat]
+          this.dayItem.lnglat = lnglat
+          this.addMarker = new AMap.Marker({
+            position: lnglat,
+            title: '北京',
+            map: this.addMap,
+          })
         })
       },
-      upload () {
-        APIUtil.post('/Tour', {
-          'name': this.name,
-          'price': this.price,
-          'details': JSON.stringify(this.details),//字符串序列化
-          'img_list': JSON.stringify(this.img_list),
-          'tag': JSON.stringify(this.tag),
-          'review_status': 'review',
-          'merchant_name': '携程伴你行'
-        }).then((res) => {
-          console.log(res)
-          if (res.status === 200) {
-            alert('上传成功')
-          }
-        })
-      }//upload
     },
-
+    upload () {
+      APIUtil.post('/Tour', {
+        'name': this.name,
+        'price': this.price,
+        'details': JSON.stringify(this.details),//字符串序列化
+        'img_list': JSON.stringify(this.img_list),
+        'tag': JSON.stringify(this.tag),
+        'review_status': 'review',
+        'merchant_name': '携程伴你行'
+      }).then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          alert('上传成功')
+        }
+      })
+    },//upload
     mounted () {
-      this.initMap()
-
-      // APIUtil.get('/Commodity').then((res) => {
-      //   console.log(res)
-      //   console.log(res.data.Commodity[0])
-      //   this.commodityname = res.data.Commodity[0].commodityname
-      // })
+      this.initAddMap()
+      this.updateDayItemMap()
     },
   }
 </script>
