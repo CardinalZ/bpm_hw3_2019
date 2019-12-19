@@ -84,7 +84,7 @@
         <div class="label">套餐类型：</div>
         <div style="display: flex;flex-wrap: wrap;padding: 5px;">
           <Tag
-            v-for="item in selectionList"
+            v-for="(item,index) in selectionList" :key="index"
             type="border" closable color="blue">{{item}}
           </Tag>
           <!--          添加Tag部分-->
@@ -141,12 +141,12 @@
             img: 'http://n1-q.mafengwo.net/s14/M00/06/60/wKgE2lz7luCAJxXPAA2QE1CbP3I441.jpg',
             lnglat: [100.235295, 26.870272],
           },
-          {
-            activity: '登顶玉龙雪山',
-            description: '十三座雪峰连绵不绝，宛若一条巨龙腾跃飞舞。',
-            img: 'http://b1-q.mafengwo.net/s12/M00/0C/95/wKgED1vuIRWAOQSVAAhK4xMZrXM62.jpeg',
-            lnglat: [100.201152, 27.133846],
-          },
+          // {
+          //   activity: '登顶玉龙雪山',
+          //   description: '十三座雪峰连绵不绝，宛若一条巨龙腾跃飞舞。',
+          //   img: 'http://b1-q.mafengwo.net/s12/M00/0C/95/wKgED1vuIRWAOQSVAAhK4xMZrXM62.jpeg',
+          //   lnglat: [100.201152, 27.133846],
+          // },
           // {
           //   activity: '大理/泸沽湖',
           //   description: '大理，一个风花雪月的地方。',
@@ -201,7 +201,8 @@
           img_list: JSON.stringify(this.img_list),
           tags: JSON.stringify(this.tagList),
           review_status: 'review',
-          merchant_name: '携程伴你行',
+          merchant_id: 0,
+          merchant_name: '官方直营店',
           selections: JSON.stringify(this.selectionList),
         }).then((res) => {
           console.log(res)
