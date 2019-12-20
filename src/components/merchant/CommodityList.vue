@@ -2,7 +2,7 @@
   <div>
     <Row>
       <Col span="24">
-        <Input v-model="commodityname" placeholder="商品名称" style="width: 300px"></Input>
+        <Input v-model="name" placeholder="商品名称" style="width: 300px"></Input>
         <Button type="primary" style="width: 100px" @click="query">查找</Button>
         <Button type="primary" style="width: 100px" @click="addCommodity">添加商品信息</Button>
       </Col>
@@ -30,7 +30,7 @@
             key: 'price'
           },
           {
-            title: '详情',
+            title: '标签',
             key: 'tags'
           },
           {
@@ -87,12 +87,12 @@
       },
       query () {
         var resultList = []
-        let commodityname = ''
-        if (this.commodityname != null) {
-          commodityname = this.commodityname.trim()
+        let name = ''
+        if (this.name != null) {
+          name = this.name.trim()
         }
         APIUtil.get('/Tour', {
-          'Tour.name': commodityname
+          'Tour.name': name
         }).then(response => {
           console.log(response)
           resultList = response.data.Tour
