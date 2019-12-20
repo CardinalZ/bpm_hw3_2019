@@ -5,16 +5,16 @@
           class="card">
       <p slot="title" style="text-align:left">
         <Icon type="ios-film-outline"></Icon>
-        {{commodity.commodityname}}
+        {{commodity.name}}
       </p>
       <a href="#" slot="extra" @click.prevent="handleClick(commodity.id)">
         审核
       </a>
       <div style="text-align:left">
         <!--        <p>预定时间： {{order.timestamp | beijing}}</p>-->
-        <p>商品名称： {{commodity.commodityname}}</p>
+        <p>商品名称： {{commodity.name}}</p>
         <p>商家： {{commodity.merchant_name}}</p>
-        <p>类别： {{commodity.category}}</p>
+        <p>类别： 定制游</p>
       </div>
     </Card>
     <Card v-for="commodity1 in commodityList1"
@@ -22,16 +22,16 @@
           class="card">
       <p slot="title" style="text-align:left">
         <Icon type="ios-film-outline"></Icon>
-        {{commodity1.commodityname}}
+        {{commodity1.name}}
       </p>
       <a href="#" slot="extra" @click.prevent="handleClick(commodity1.id)">
         审核已通过
       </a>
       <div style="text-align:left">
         <!--        <p>预定时间： {{order.timestamp | beijing}}</p>-->
-        <p>商品名称： {{commodity1.commodityname}}</p>
+        <p>商品名称： {{commodity1.name}}</p>
         <p>商家： {{commodity1.merchant_name}}</p>
-        <p>类别： {{commodity1.category}}</p>
+        <p>类别： 定制游</p>
       </div>
     </Card>
   </div>
@@ -61,8 +61,8 @@
     mounted () {
       var reviewItems = []
       var reviewedItems = []
-      APIUtil.get('/Commodity').then(res => {
-          res.data.Commodity.forEach(item => {
+      APIUtil.get('/Tour').then(res => {
+          res.data.Tour.forEach(item => {
             if (item.review_status === 'review') {
               reviewItems.push(item)
             }
@@ -70,8 +70,8 @@
         }
       )
       this.commodityList = reviewItems
-      APIUtil.get('/Commodity').then(res => {
-          res.data.Commodity.forEach(item => {
+      APIUtil.get('/Tour').then(res => {
+          res.data.Tour.forEach(item => {
             if (item.review_status === 'pass') {
               reviewedItems.push(item)
             }

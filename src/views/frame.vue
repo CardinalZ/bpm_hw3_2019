@@ -88,9 +88,9 @@
       },
       checkUpdate () {
         if (this.role === 'platformManager') {
-          APIUtil.get('/Commodity').then(response => {
+          APIUtil.get('/Tour').then(response => {
             if (response.status === 200) {
-              let list = response.data.Commodity
+              let list = response.data.Tour
               /*
                * If count is not equal, get its last item
                */
@@ -107,7 +107,7 @@
       },
       sendNoticeCommodity (newCommodity) {
         let id = newCommodity.id
-        let commodityname = newCommodity.commodityname
+        let commodityname = newCommodity.name
         //let examinationTime = newCommodity.timestamp * 1000
         this.$Notice.info({
           title: '商品 - ' + id,

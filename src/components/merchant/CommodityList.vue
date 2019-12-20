@@ -23,19 +23,15 @@
         columns: [
           {
             title: '商品名称',
-            key: 'commodityname'
+            key: 'name'
           },
           {
-            title: '游玩天数',
-            key: 'commoditydays'
+            title: '价格',
+            key: 'price'
           },
           {
-            title: '出发地',
-            key: 'commodityplace'
-          },
-          {
-            title: '推荐理由',
-            key: 'recommendresult'
+            title: '详情',
+            key: 'tags'
           },
           {
             title: '操作',
@@ -63,10 +59,9 @@
 
         ],
         data: [], //  data show in Table
-        commodityname: null,
-        commoditydays: null,
-        commodityplace: null,
-        recommendresult: null
+        name: null,
+        price: null,
+        tags: []
       }
     },
     // mounted () {
@@ -96,17 +91,22 @@
         if (this.commodityname != null) {
           commodityname = this.commodityname.trim()
         }
-        APIUtil.get('/Commodity', {
-          'Commodity.commodityname': commodityname
+        APIUtil.get('/Tour', {
+          'Tour.name': commodityname
         }).then(response => {
           console.log(response)
-          resultList = response.data.Commodity
+          resultList = response.data.Tour
           this.data = [] // clean the current data
           resultList.forEach(item => {
             this.data.push(item)
           })
         })
-      },
+      }
+    },
+    mounted () {
+      APIUtil.get('/Tour').then(res => {
+        this.data = res.data.Tour
+      })
     }
   }
 </script>

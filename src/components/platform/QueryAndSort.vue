@@ -34,16 +34,16 @@
             class="card">
         <p slot="title" style="text-align:left">
           <Icon type="ios-film-outline"></Icon>
-          {{commodity.commodityname}}
+          {{commodity.name}}
         </p>
         <a href="#" slot="extra" @click.prevent="handleClick(commodity.id)">
           查看详情
         </a>
         <div style="text-align:left">
           <!--        <p>预定时间： {{order.timestamp | beijing}}</p>-->
-          <p>商品名： {{commodity.commodityname}}</p>
+          <p>商品名： {{commodity.name}}</p>
           <p>商品类别： 定制游</p>
-          <p>推荐理由： {{commodity.recommendresult}}</p>
+          <p>价格： {{commodity.price}}</p>
         </div>
       </Card>
     </div>
@@ -73,12 +73,19 @@
             this.merchantList = res.data.Merchant
           })
         }else if(this.category!==''){
-          APIUtil.get("/Commodity").then(res=>{
+          APIUtil.get("/Tour").then(res=>{
             console.log(res)
-            this.commodityList = res.data.Commodity
+            this.commodityList = res.data.Tour
           })
         }
-
+      },
+      handleClick(id){
+        this.$router.push({
+          name: 'CommodityDetail',
+          params: {
+            id: id
+          }
+        })
       }
     }
   }
