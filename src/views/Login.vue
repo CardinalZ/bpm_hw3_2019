@@ -28,13 +28,13 @@
           this.$store.dispatch('changeLoginState', true)
           this.$store.dispatch('changeRole', 'platformManager')
           this.$router.push({
-            name: 'CommodityList'
+            name: 'CommodityReviewList'
           })
         } else if (this.name === 'merchant' && this.password === '123456') {
           this.$store.dispatch('changeLoginState', true)
           this.$store.dispatch('changeRole', 'merchant')
           this.$router.push({
-            name: 'CommodityReviewList'
+            name: 'CommodityList'
           })
         }
       }
