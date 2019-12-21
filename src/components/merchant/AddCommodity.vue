@@ -126,11 +126,23 @@
       return {
         inputTourId: '',//测试
 
-        name: ' ',
-        price: ' ',
-        tagList: [],
-        img_list: [],
+        name: '川西稻城亚丁环线7日线路',
+        price: '6000',
+        tagList: ["骑行","远足"],
+        img_list: ["http://ask.yishilvyou.com/scc/static/picture/188b09cae79344d9992c826b55a7beb5.jpg"],
         details: [
+          {
+            activity: '川西稻城亚丁环线7日线路',
+            description: '藏寨从大金河谷层层向上攀缘，一直伸延到卡帕玛群峰脚下，整个山寨依着起伏的山势迤逦连绵',
+            img: 'http://ask.yishilvyou.com/scc/static/picture/188b09cae79344d9992c826b55a7beb5.jpg',
+            lnglat: [255, 317],
+          }
+          // {
+          //   activity: '登顶长白山',
+          //   description: '吉林-雾凇岛-长白山',
+          //   img: 'https://dimg04.c-ctrip.com/images/3006190000017za3i4402_C_135_82_Q90.jpg',
+          //   lnglat: [255,317],
+          // },
           // {
           //   activity: '登顶玉龙雪山',
           //   description: '十三座雪峰连绵不绝，宛若一条巨龙腾跃飞舞。',
@@ -146,14 +158,14 @@
           //   img: 'http://n1-q.mafengwo.net/s12/M00/71/0B/wKgED1wbRsCABIaZAAfeiae_PmM46.jpeg',
           //   lnglat: [100.231877, 25.58998],
           // },
-          {
-            activity: '香格里拉',
-            description: '香格里拉大家向往的滇北高原小城，四季变幻。',
-            img: 'http://p1-q.mafengwo.net/s12/M00/49/D6/wKgED1wNxn6AEwupAAzyTLtn2rc499.png',
-            lnglat: [99.486317, 28.343369],
-          },
+          // {
+          //   activity: '香格里拉',
+          //   description: '香格里拉大家向往的滇北高原小城，四季变幻。',
+          //   img: 'http://p1-q.mafengwo.net/s12/M00/49/D6/wKgED1wNxn6AEwupAAzyTLtn2rc499.png',
+          //   lnglat: [99.486317, 28.343369],
+          // },
         ],
-        selectionList: [],
+        selectionList: ["稻城亚丁+能量补充套餐","稻城亚丁+休闲娱乐套餐"],
 
         img_address:
           '',
@@ -169,7 +181,7 @@
             img:
               '',
             lnglat:
-              [116.397428, 39.90923],
+              [255,317],
           }
         ,
         item: '',

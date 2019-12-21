@@ -8,9 +8,8 @@
         订单{{order.id}}
       </p>
       <a href="#" slot="extra" @click.prevent="handleClick(order.id)">
+        <div v-if="order.state==='pass'">已处理</div>
         <div v-if="order.state==='review'">待处理</div>
-        <div v-if="order.state==='topay'">待支付</div>
-        <div v-if="order.state==='pass'">已支付</div>
       </a>
 
 
