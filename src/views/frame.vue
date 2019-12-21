@@ -127,7 +127,7 @@
         let commodityname = newCommodity.name
         //let examinationTime = newCommodity.timestamp * 1000
         this.$Notice.info({
-          title: '商品 - ' + id,
+          title: '商品详情：商品 - ' + id,
           name: id,
           duration: 0,
           render: createElement => {
@@ -159,7 +159,7 @@
         let ordername = newOrder.product_name
         //let examinationTime = newCommodity.timestamp * 1000
         this.$Notice.info({
-          title: '商品 - ' + id,
+          title: '订单详情：商品 - ' + id,
           name: id,
           duration: 0,
           render: createElement => {

@@ -5,10 +5,8 @@
       <Divider>
         <h5>基本信息</h5>
       </Divider>
-      <div class="add-item">
-        <div class="label">商品名称：{{tour.name}}</div>
-        <div class="label">商品价格：{{tour.price}}</div>
-      </div>
+        <div>商品名称：{{tour.name}}</div>
+        <div>商品价格：{{tour.price}}</div>
       <div class="add-item">
         <div class="label">商品标签：</div>
         <div style="display: flex;flex-wrap: wrap;padding: 5px;">
@@ -22,7 +20,6 @@
           <img v-for="img in img_list" :src="img"/>
         </div>
       </div>
-      行程路线
       <Divider>
         <h5>行程路线</h5>
       </Divider>
