@@ -126,21 +126,11 @@
       return {
         inputTourId: '',//测试
 
-        name: '西安直飞丽江+大理/泸沽湖/香格里拉7天自由行',
-        price: '2580',
-        tagList: ['家庭亲子', '游船环湖', '篝火晚会'],
-        img_list: [
-          'https://n1-q.mafengwo.net/s11/M00/FB/CB/wKgBEFrQbruAITyhAADoL22YR4A40.jpeg',
-          'https://p1-q.mafengwo.net/s7/M00/9C/19/wKgB6lUE9XyAO7g9AASnYV5jUB897.jpeg',
-          'https://b1-q.mafengwo.net/s9/M00/B5/5C/wKgBs1ePnxOATWfyAA-Z_X0kY4U06.jpeg',
-        ],
+        name: ' ',
+        price: ' ',
+        tagList: [],
+        img_list: [],
         details: [
-          {
-            activity: '丽江自由行',
-            description: '住丽江古城特色客栈，夜游古城赏夜景品小吃',
-            img: 'http://n1-q.mafengwo.net/s14/M00/06/60/wKgE2lz7luCAJxXPAA2QE1CbP3I441.jpg',
-            lnglat: [100.235295, 26.870272],
-          },
           // {
           //   activity: '登顶玉龙雪山',
           //   description: '十三座雪峰连绵不绝，宛若一条巨龙腾跃飞舞。',
@@ -148,23 +138,22 @@
           //   lnglat: [100.201152, 27.133846],
           // },
           // {
+          //
+          // },
+          // {
           //   activity: '大理/泸沽湖',
           //   description: '大理，一个风花雪月的地方。',
           //   img: 'http://n1-q.mafengwo.net/s12/M00/71/0B/wKgED1wbRsCABIaZAAfeiae_PmM46.jpeg',
           //   lnglat: [100.231877, 25.58998],
           // },
-          // {
-          //   activity: '香格里拉',
-          //   description: '香格里拉大家向往的滇北高原小城，四季变幻。',
-          //   img: 'http://p1-q.mafengwo.net/s12/M00/49/D6/wKgED1wNxn6AEwupAAzyTLtn2rc499.png',
-          //   lnglat: [99.486317, 28.343369],
-          // },
+          {
+            activity: '香格里拉',
+            description: '香格里拉大家向往的滇北高原小城，四季变幻。',
+            img: 'http://p1-q.mafengwo.net/s12/M00/49/D6/wKgED1wNxn6AEwupAAzyTLtn2rc499.png',
+            lnglat: [99.486317, 28.343369],
+          },
         ],
-        selectionList: [
-          '【洱语】丽江+大理+泸沽湖',
-          '【文吟】丽江+大理+香格里拉',
-          '【邂逅】丽江+泸沽湖+香格里拉',
-        ],
+        selectionList: [],
 
         img_address:
           '',

@@ -6,7 +6,7 @@
         <img  style="width: 400px" src='../../assets/yunnan.jpg'>
       </Sider>
       <Content>
-        <p>商品名称： {{order.commodityname}}</p>
+        <p>商品名称： {{order.product_name}}</p>
         <p>用户： {{order.username}}</p>
         <p>商家： {{order.merchantname}}</p>
 <!--        <p>价格： {{order.price}}</p>-->

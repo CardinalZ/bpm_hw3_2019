@@ -8,24 +8,26 @@
         订单{{order.id}}
       </p>
       <a href="#" slot="extra" @click.prevent="handleClick(order.id)">
-        <div v-if="order.state==='review'">处理</div>
-        已处理
+        <div v-if="order.state==='review'">待处理</div>
+        <div v-if="order.state==='topay'">待支付</div>
+        <div v-if="order.state==='pass'">已支付</div>
       </a>
 
 
       <div style="text-align:left">
         <!--        <p>预定时间： {{order.timestamp | beijing}}</p>-->
-        <p>商品名称： {{order.commodityname}}</p>
-        <p>用户： {{order.username}}</p>
-        <p>商家： {{order.merchantname}}</p>
-        <p>备注： {{order.detail}}</p>
+        <p>商品名称： {{order.product_name}}</p>
+        <p>价格： {{order.price}}</p>
+        <p>商家： {{order.merchant_name}}</p>
+        <p>商品类型： {{order.product_category}}</p>
       </div>
     </Card>
   </div>
 </template>
 
 <script>
-import APIUtil from '../../services/APIUtil'
+  import APIUtil from '../../services/APIUtil'
+
   export default {
     name: 'OrderList',
     data () {
@@ -45,11 +47,14 @@ import APIUtil from '../../services/APIUtil'
       }
     },
     mounted () {
-
+      var stateItems = []
       APIUtil.get('/Order').then(res => {
-        console.log(res)
-        this.orderList = res.data.Order
-
+          res.data.Order.forEach(item => {
+            if (item.state === 'pass'||item.state === 'review'||item.state === 'topay') {
+              stateItems.push(item)
+            }
+          })
+          this.orderList = stateItems
       })
     }
   }

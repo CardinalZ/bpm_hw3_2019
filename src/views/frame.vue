@@ -104,6 +104,23 @@
             }
           })
         }
+        if (this.role === 'merchant') {
+          APIUtil.get('/Order').then(response => {
+            if (response.status === 200) {
+              let list = response.data.Order
+              /*
+               * If count is not equal, get its last item
+               */
+              if (this.lastCount !== 0 && list.length !== this.lastCount) {
+                this.sendNoticeOrder(list[list.length - 1])
+              }
+              /*
+               * Update lastCount
+               */
+              this.lastCount = list.length
+            }
+          })
+        }
       },
       sendNoticeCommodity (newCommodity) {
         let id = newCommodity.id
@@ -137,6 +154,38 @@
           }
         })
       },
+      sendNoticeOrder (newOrder) {
+        let id = newOrder.id
+        let ordername = newOrder.product_name
+        //let examinationTime = newCommodity.timestamp * 1000
+        this.$Notice.info({
+          title: '商品 - ' + id,
+          name: id,
+          duration: 0,
+          render: createElement => {
+            return createElement('div', {
+                style: {
+                  lineHeight: 1.5
+                },
+                on: {
+                  click: () => {
+                    this.$router.push({
+                      name: 'OrderDetail',
+                      params: {
+                        id: id
+                      }
+                    })
+                    this.$Notice.close(id)
+                  }
+                }
+              },
+              [
+                createElement('p', ['商品名称: ' + ordername]),
+                //createElement('p', ['开单时间: ' + Util.timeStampFormatter(examinationTime)])
+              ])
+          }
+        })
+      }
     },
     mounted () {
       setInterval(() => this.checkUpdate(), 2000)
