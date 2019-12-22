@@ -100,7 +100,10 @@
               /*
                * Update lastCount
                */
+              console.log(this.lastCount)
+              console.log(list.length)
               this.lastCount = list.length
+
             }
           })
         }
