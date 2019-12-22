@@ -58,12 +58,12 @@
              src="https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3471450367,2960035463&fm=111&gp=0.jpg">
         <div style="width: 320px;display: flex;flex-direction: column;">
           <div style="display: flex;">
-            <div>{{item.fromNick}}</div>
+            <div>{{item.lastMsg?item.lastMsg.fromNick:''}}</div>
             <div style="flex-grow: 1;"></div>
-            <div>{{item.time}}</div>
+            <div>{{item.updateTime}}</div>
           </div>
-          <Badge dot :count="item.unread">
-            <div style="text-align: left;">{{item.text}}</div>
+          <Badge :count="item.unread">
+            <div style="text-align: left;">{{item.lastMsg?item.lastMsg.text:''}}</div>
           </Badge>
         </div>
       </div>
@@ -147,57 +147,16 @@
       },
     },
     methods: {
-      initSessionList (sessions) {
-        // this.session_list = []
-        sessions.forEach(it => {
-          this.session_list.push({
-            flow: it.lastMsg.flow,
-            to: it.to,
-            unread: it.unread,
-            fromNick: it.lastMsg.fromNick,
-            time: new Date(it.lastMsg.time).format('yyyy-MM-dd hh:mm:ss'),
-            text: it.lastMsg.text,
-            avatar: '',
-          })
-        })
-      },
-      updateSession (session) {
-        let curI = -1
-        let it = null
-        for (let i = 0; i < this.session_list.length; i++) {
-          it = this.session_list[i]
-          if (session.to === it.to) {
-            curI = i
+      resetUnread (session_id) {
+        this.nim.resetSessionUnread(session_id)
+        let i = 0
+        for (; i < this.session_list.length; i++) {
+          let sess = this.session_list[i]
+          if (sess.id === session_id) {
             break
           }
         }
-        if (curI !== -1) {
-          this.session_list.splice(curI, 1)
-          it = session
-        }
-        this.session_list.unshift({
-          flow: it.lastMsg.flow,
-          to: it.to,
-          unread: it.unread,
-          fromNick: it.lastMsg.fromNick,
-          time: new Date(it.lastMsg.time).format('yyyy-MM-dd hh:mm:ss'),
-          text: it.lastMsg.text,
-          avatar: '',
-        })
-      },
-      toggleChatting () {
-        this.isShowChat = !this.isShowChat
-      },
-      animate (i) {
-        this.isAnimating[i] = true
-        this.isAnimating = [...this.isAnimating]
-      },
-      msgAnimationEnd (i) {
-        this.isAnimating[i] = false
-        this.isAnimating = [...this.isAnimating]
-      },
-      exitChat () {
-        this.isChatting = false
+        this.$set(this.session_list, i, this.session_list[i])
       },
       enterChat (item) {
         if (!item.to) {
@@ -206,6 +165,8 @@
         }
         this.cur_session = item
         this.isChatting = true
+        //重置未读数
+        this.resetUnread(this.cur_session.id)
         this.getHistoryMsgs()
       },
       getHistoryMsgs () {
@@ -215,11 +176,9 @@
             scene: 'p2p',
             to: this.cur_session.to,
             done (error, obj) {
-              console.log('获取p2p历史消息' + (!error ? '成功' : '失败'))
-              console.log(error)
+              console.log('获取p2p历史消息：' + (!error ? '成功' : '失败'))
               console.log(obj)
               if (!error) {
-                console.log(obj.msgs)
                 obj.msgs.forEach(msg => {
                   _this.appendNewMsg(msg, true)
                 })
@@ -317,19 +276,33 @@
             if (msg.from === _this.talk_to) {
               _this.appendNewMsg(msg)
             }
+            if (_this.isChatting) {
+              this.resetUnread(this.cur_session.id)
+            }
           },//onmsg
           onsessions (sessions) {
-            console.log('收到会话列表', sessions)
-            _this.initSessionList(sessions)
-            // _this.updateSessionsUI()
+            console.log('收到会话列表：', sessions)
+            _this.session_list = sessions
           },
           onupdatesession (session) {
-            console.log('会话更新了', session)
-            _this.updateSession(session)
-            // data.sessions = this.nim.mergeSessions(data.sessions, session)
-            // _this.updateSessionsUI()
+            console.log('会话更新了：', session)
+            _this.session_list = _this.nim.mergeSessions(_this.session_list, session)
           },
         })
+      },
+      animate (i) {
+        this.isAnimating[i] = true
+        this.isAnimating = [...this.isAnimating]
+      },
+      msgAnimationEnd (i) {
+        this.isAnimating[i] = false
+        this.isAnimating = [...this.isAnimating]
+      },
+      toggleChatting () {
+        this.isShowChat = !this.isShowChat
+      },
+      exitChat () {
+        this.isChatting = false
       },
     },
   }
