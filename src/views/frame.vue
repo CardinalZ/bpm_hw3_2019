@@ -62,7 +62,8 @@
     components: {Login},
     data () {
       return {
-        lastCount: 0
+        lastCountOrder: 0,
+        lastCountTour: 0
       }
     },
     computed: {
@@ -94,15 +95,15 @@
               /*
                * If count is not equal, get its last item
                */
-              if (this.lastCount !== 0 && list.length !== this.lastCount) {
+              if (this.lastCountTour !== 0 && list.length !== this.lastCountTour) {
                 this.sendNoticeCommodity(list[list.length - 1])
               }
               /*
                * Update lastCount
                */
-              console.log(this.lastCount)
+              console.log(this.lastCountTour)
               console.log(list.length)
-              this.lastCount = list.length
+              this.lastCountTour = list.length
 
             }
           })
@@ -114,13 +115,13 @@
               /*
                * If count is not equal, get its last item
                */
-              if (this.lastCount !== 0 && list.length !== this.lastCount) {
+              if (this.lastCountOrder !== 0 && list.length !== this.lastCountOrder) {
                 this.sendNoticeOrder(list[list.length - 1])
               }
               /*
                * Update lastCount
                */
-              this.lastCount = list.length
+              this.lastCountOrder = list.length
             }
           })
         }
