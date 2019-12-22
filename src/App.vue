@@ -62,7 +62,7 @@
             <div style="flex-grow: 1;"></div>
             <div>{{item.updateTime}}</div>
           </div>
-          <Badge dot :count="item.unread">
+          <Badge :count="item.unread">
             <div style="text-align: left;">{{item.lastMsg?item.lastMsg.text:''}}</div>
           </Badge>
         </div>
@@ -275,6 +275,9 @@
             _this.animate(1)
             if (msg.from === _this.talk_to) {
               _this.appendNewMsg(msg)
+            }
+            if (_this.isChatting) {
+              this.resetUnread(this.cur_session.id)
             }
           },//onmsg
           onsessions (sessions) {
