@@ -76,6 +76,7 @@
       }
     },
     mounted () {
+      console.log(this.order.product_name)
       APIUtil.get('/Order/'+ this.id).then(res=>{
           this.order = res.data
         }),
@@ -83,6 +84,7 @@
         res.data.Tour.forEach(item => {
           if (item.name === this.order.product_name) {
             this.tour = item
+            console.log(item)
             this.tag_list = JSON.parse(item.tags)
             this.img_list = JSON.parse(item.img_list)
             this.details = JSON.parse(item.details)
@@ -93,7 +95,7 @@
     },
     methods: {
       reviewPass(){
-        this.order.state = 'topay'
+        this.order.state = 'pass'
         APIUtil.put('/Order/'+this.id,this.order).then(res=>{
             console.log(this.order)
             if(res.status === 200)
