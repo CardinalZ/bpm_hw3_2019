@@ -1,28 +1,34 @@
 <template>
   <div>
     <Header>
-      <div class="layout-logo"></div>
       <div class="layout-title">
         移动旅游出行平台
       </div>
       <div style="text-align: right;font-size: medium;color: white">
-      <Dropdown>
-          <Avatar icon="ios-person" size="large" />
+        <Dropdown>
+          <Avatar v-if="role!=='merchant'" style="color: #f56a00;background-color: #fde3cf">A</Avatar>
+          <Avatar v-if="role==='merchant'" :src="require('../assets/merchant.png')" size="large"/>
           {{this.role}}
           <Icon type="ios-arrow-down"></Icon>
-        <DropdownMenu slot="list">
-          <DropdownItem>基本信息</DropdownItem>
-          <DropdownItem>账户信息</DropdownItem>
-          <DropdownItem>用户与权限</DropdownItem>
-          <DropdownItem divided><Button @click="logout">退出登陆</Button></DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+          <DropdownMenu slot="list">
+            <DropdownItem>基本信息</DropdownItem>
+            <DropdownItem>用户与权限</DropdownItem>
+            <DropdownItem divided>
+              <Button @click="logout">退出登陆</Button>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
 
       </div>
     </Header>
     <Layout :style="{minHeight: '100vh'}">
       <Sider style="background: white;">
-        <Menu ref="menu" :theme="'light'" active-name="'visit'" width="auto" @on-select="onSelected">
+        <Menu ref="menu"
+              style="text-align: left;"
+              :theme="'light'"
+              active-name="'visit'"
+              width="auto"
+              @on-select="onSelected">
           <div v-if="role==='merchant'">
             <MenuItem name="CommodityList">
               <Icon type="md-document"/>
@@ -82,7 +88,7 @@
           name: name
         })
       },
-      logout(){
+      logout () {
         this.$router.push({
           name: 'Login'
         })
@@ -200,8 +206,8 @@
 <style lang="scss" scoped>
 
   .layout-title {
+    font-weight: bold;
     float: left;
-    left: 20px;
     position: relative;
     font-size: 16px;
     color: white;

@@ -7,7 +7,7 @@
       <Button @click="animate(1)">animate2</Button>
     </div>
     <router-view/>
-    <div class="msg_body"
+    <div v-if="role==='merchant'" class="msg_body"
          :style="{transform:style_msg_body}">
       <div style="display: flex;align-items: center;
       padding: 5px 8px;border-bottom: 1px gray solid;">
@@ -15,9 +15,9 @@
           <Button @click="exitChat"
                   size="small" style="background: transparent;" shape="circle" icon="ios-arrow-back"/>
         </div>
-        <img style="width: 36px;height: 36px;margin:0 8px;border-radius: 5px;"
-             src="https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3471450367,2960035463&fm=111&gp=0.jpg">
-        <div style="font-weight: bold;">Vila vida</div>
+        <img style="width: 36px;height: 36px;margin:0 8px;border-radius: 5px;object-fit: cover"
+             :src="user.avatar">
+        <div style="font-weight: bold;">{{user.name}}</div>
       </div>
 
       <div id='z-scroll-chat' style="height: 300px;" class="z-scroll">
@@ -48,19 +48,19 @@
       </div>
 
     </div>
-    <div class="msg_list"
+    <div v-if="role==='merchant'" class="msg_list"
          :style="{transform:style_msg_list}">
       <div v-for="item in session_list"
            @click="enterChat(item)"
            style="display: flex;align-items: center;border-radius: 5px;cursor: pointer;
            padding: 5px 8px;background: #000c;margin-bottom: 1px;">
-        <img style="width: 36px;height: 36px;margin-right: 5px;border-radius: 5px;"
-             src="https://dss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3471450367,2960035463&fm=111&gp=0.jpg">
+        <img style="width: 36px;height: 36px;margin-right: 5px;border-radius: 5px;object-fit: cover"
+             :src="user.avatar">
         <div style="width: 320px;display: flex;flex-direction: column;">
           <div style="display: flex;">
-            <div>{{item.lastMsg?item.lastMsg.fromNick:''}}</div>
+            <div>{{user.name}}</div>
             <div style="flex-grow: 1;"></div>
-            <div>{{item.updateTime}}</div>
+            <div>{{new Date(item.updateTime).format('yyyy-MM-dd hh:mm:ss')}}</div>
           </div>
           <Badge :count="item.unread">
             <div style="text-align: left;">{{item.lastMsg?item.lastMsg.text:''}}</div>
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-    <div class="msg_ball">
+    <div v-if="role==='merchant'" class="msg_ball">
       <Badge dot>
         <div @animationend='msgAnimationEnd(0)'
              @click="toggleChatting"
@@ -91,10 +91,16 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
+
   export default {
     name: 'App',
     data () {
       return {
+        user: {
+          name: '克里斯多夫',
+          avatar: require('./assets/user.png')
+        },
         isAnimating: [true, true],
         input_msg: '',
         acc_id: 'test1',
@@ -131,6 +137,10 @@
       // this.initIM()
     },
     computed: {
+      ...mapGetters([
+        'isLogin',
+        'role'
+      ]),
       style_msg_body () {
         if (this.isShowChat) {
           return this.isChatting ? 'translateX(0px)' : 'translateX(1000px)'
