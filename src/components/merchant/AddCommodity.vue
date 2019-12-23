@@ -272,9 +272,8 @@
           })
         })
       },
-
       clear () {
-        APIUtil.delete(`tour/${this.inputTourId}`)
+        APIUtil.delete(`Order/${this.inputTourId}`)
           .then(res => {
             if (res.status === 200) {
               this.$Message.success('删除成功')

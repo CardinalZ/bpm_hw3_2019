@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div style="border-bottom: 1px solid red;display: flex;">
+    <div style="border-bottom: 1px solid red;display: none;">
       <Input @on-enter="connectIM" v-model="acc_id" placeholder="acc_id"/>
       <Button @click="connectIM()">连接</Button>
       <Button @click="animate(0)">animate1</Button>
@@ -51,6 +51,7 @@
     <div v-if="role==='merchant'" class="msg_list"
          :style="{transform:style_msg_list}">
       <div v-for="item in session_list"
+           v-if="item.id==='p2p-user'"
            @click="enterChat(item)"
            style="display: flex;align-items: center;border-radius: 5px;cursor: pointer;
            padding: 5px 8px;background: #000c;margin-bottom: 1px;">
@@ -69,21 +70,21 @@
       </div>
     </div>
     <div v-if="role==='merchant'" class="msg_ball">
-      <Badge dot>
-        <div @animationend='msgAnimationEnd(0)'
-             @click="toggleChatting"
-             :class="{'animated tada':isAnimating[0]}"
-             class="msg_tip_item">
-          系统
-        </div>
-      </Badge>
-      <br>
-      <Badge dot>
+      <!--      <Badge dot>-->
+      <!--        <div @animationend='msgAnimationEnd(0)'-->
+      <!--             @click="toggleChatting"-->
+      <!--             :class="{'animated tada':isAnimating[0]}"-->
+      <!--             class="msg_tip_item">-->
+      <!--          系统-->
+      <!--        </div>-->
+      <!--      </Badge>-->
+      <!--      <br>-->
+      <Badge dot :count="badge_count">
         <div @animationend='msgAnimationEnd(1)'
              @click="toggleChatting"
              :class="{'animated tada':isAnimating[1]}"
              class="msg_tip_item">
-          个人
+          消息
         </div>
       </Badge>
     </div>
@@ -103,7 +104,7 @@
         },
         isAnimating: [true, true],
         input_msg: '',
-        acc_id: 'test1',
+        acc_id: 'merchant',
         talk_to: '',
         nim: null,
         loading_send: false,
@@ -117,24 +118,25 @@
           // },
         ],
         session_list: [
-          {
-            flow: 'in',
-            to: '',
-            unread: 1,
-            from: '',
-            fromNick: '王小波',
-            time: new Date().format('yyyy-MM-dd hh:mm:ss'),
-            text: '一想到你，我的脸上就泛起微笑',
-            avatar: '',
-          }
+          // {
+          //   flow: 'in',
+          //   to: '',
+          //   unread: 1,
+          //   from: '',
+          //   fromNick: '王小波',
+          //   time: new Date().format('yyyy-MM-dd hh:mm:ss'),
+          //   text: '一想到你，我的脸上就泛起微笑',
+          //   avatar: '',
+          // }
         ],
         isChatting: false,
         isShowChat: false,
         cur_session: null,
+        badge_count: 0
       }
     },
     mounted () {
-      // this.initIM()
+      this.connectIM()
     },
     computed: {
       ...mapGetters([
@@ -167,6 +169,7 @@
           }
         }
         this.$set(this.session_list, i, this.session_list[i])
+        this.badge_count = 0
       },
       enterChat (item) {
         if (!item.to) {
@@ -181,6 +184,7 @@
       },
       getHistoryMsgs () {
         if (this.nim) {
+          this.chat_list = []
           let _this = this
           this.nim.getHistoryMsgs({
             scene: 'p2p',
@@ -221,10 +225,7 @@
         })
       },
       sendMsg () {
-        let to = 'test1'
-        if (this.acc_id === 'test1') {
-          to = 'test2'
-        }
+        let to = 'user'
         console.log('发送消息给', to)
         if (!this.nim) {
           this.$Message.error('尚未连接IM服务器，尝试重新连接')
@@ -243,18 +244,15 @@
               console.log('消息发送失败')
               console.log(error)
             } else {
+              _this.input_msg = ''
               _this.appendNewMsg(msg)
             }
           }//done
         })
       },
       connectIM () {
-        let token = '219338cb0cda45ac1a7e21a689a4d77e'
-        this.talk_to = 'test2'
-        if (this.acc_id === 'test2') {
-          token = 'a6156a446a50c1f5d014ca3d910092e8'
-          this.talk_to = 'test1'
-        }
+        let token = '1d845f5dc49a6cc733c122e75c6ebdc9'
+        this.talk_to = 'user'
         this.$Message.loading('连接IM服务器')
         let _this = this
         this.nim = this.SDK.NIM.getInstance({
@@ -265,6 +263,14 @@
           onconnect: (obj) => {
             console.log('IM连接成功', obj)
             _this.$Message.destroy()
+            // _this.nim.deleteSession({
+            //   scene: 'p2p',
+            //   to: 'test1',
+            //   done (error, obj) {
+            //     console.log('删除成功')
+            //     console.log(error, obj)
+            //   }
+            // })
           },
           ondisconnect (error) {
             console.log('IM连接失败', error)
@@ -286,6 +292,7 @@
             if (msg.from === _this.talk_to) {
               _this.appendNewMsg(msg)
             }
+            _this.badge_count = _this.badge_count + 1
             if (_this.isChatting) {
               this.resetUnread(this.cur_session.id)
             }
@@ -293,6 +300,9 @@
           onsessions (sessions) {
             console.log('收到会话列表：', sessions)
             _this.session_list = sessions
+            if (sessions.length > 0) {
+              _this.badge_count = sessions[0].unread
+            }
           },
           onupdatesession (session) {
             console.log('会话更新了：', session)
